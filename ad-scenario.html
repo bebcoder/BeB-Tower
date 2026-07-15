@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>آموزشگاه | BeB Tower</title>
+
+<style>
+
+@font-face{
+font-family:"Vazirmatn";
+src:url("./assets/fonts/Vazirmatn-FD-Light.woff2") format("woff2");
+font-weight:300;
+font-display:swap;
+}
+
+@font-face{
+font-family:"Vazirmatn";
+src:url("./assets/fonts/Vazirmatn-FD-Regular.woff2") format("woff2");
+font-weight:400;
+font-display:swap;
+}
+
+@font-face{
+font-family:"Vazirmatn";
+src:url("./assets/fonts/Vazirmatn-FD-Bold.woff2") format("woff2");
+font-weight:700;
+font-display:swap;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Vazirmatn",sans-serif;
+background:#050816;
+color:#fff;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+.bg{
+position:fixed;
+inset:0;
+z-index:-1;
+background:
+radial-gradient(circle at center,rgba(56,189,248,.12),transparent 35%),
+radial-gradient(circle at top left,rgba(129,140,248,.15),transparent 35%),
+linear-gradient(to bottom,#050816,#0b1220);
+}
+
+header{
+padding:24px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+backdrop-filter:blur(12px);
+background:rgba(0,0,0,.15);
+border-bottom:1px solid rgba(255,255,255,.05);
+position:sticky;
+top:0;
+z-index:100;
+}
+
+.logo{
+font-size:1.3rem;
+font-weight:700;
+}
+
+.logo span{
+color:#38bdf8;
+}
+
+.back{
+color:#38bdf8;
+text-decoration:none;
+}
+
+.hero{
+padding:80px 30px 50px;
+text-align:center;
+max-width:900px;
+margin:auto;
+}
+
+.hero h1{
+font-size:3.2rem;
+margin-bottom:15px;
+}
+
+.hero p{
+color:#94a3b8;
+line-height:2;
+}
+
+.grid{
+max-width:1400px;
+margin:auto;
+padding:20px 30px 80px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+gap:24px;
+}
+
+.card{
+background:rgba(15,23,42,.55);
+border:1px solid rgba(255,255,255,.05);
+backdrop-filter:blur(20px);
+border-radius:24px;
+overflow:hidden;
+transition:.3s;
+cursor:pointer;
+text-decoration:none;
+color:white;
+display:block;
+}
+
+.card:hover{
+transform:translateY(-8px);
+border-color:rgba(56,189,248,.35);
+box-shadow:0 0 30px rgba(56,189,248,.15);
+}
+
+.cover{
+height:180px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:4rem;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+}
+
+.content{
+padding:24px;
+}
+
+.content h3{
+margin-bottom:14px;
+font-size:1.3rem;
+}
+
+.content p{
+color:#94a3b8;
+line-height:2;
+font-size:.92rem;
+}
+
+.badge{
+display:inline-block;
+padding:6px 12px;
+border-radius:999px;
+margin-bottom:15px;
+font-size:.8rem;
+}
+
+.active{
+background:rgba(34,197,94,.15);
+color:#22c55e;
+}
+
+.soon{
+background:rgba(148,163,184,.12);
+color:#94a3b8;
+}
+
+.footer{
+padding:40px;
+text-align:center;
+color:#64748b;
+border-top:1px solid rgba(255,255,255,.05);
+}
+
+@media(max-width:768px){
+
+.hero h1{
+font-size:2.2rem;
+}
+
+header{
+padding:20px;
+}
+
+.grid{
+padding:20px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<header>
+
+<div class="logo">
+آموزشگاه <span>BeB</span>
+</div>
+
+<a class="back" href="index.html">
+بازگشت به برج
+</a>
+
+</header>
+
+<section class="hero">
+
+<h1>
+آموزشگاه
+</h1>
+
+<p>
+مرکز آموزش، مستندات، سناریوهای عملی و مسیرهای یادگیری برج BeB
+</p>
+
+</section>
+
+<section class="grid">
+
+<a class="card" href="ad-scenario.html">
+
+<div class="cover">
+🖥️
+</div>
+
+<div class="content">
+
+<div class="badge active">
+فعال
+</div>
+
+<h3>
+Active Directory Lab
+</h3>
+
+<p>
+35 سناریوی عملی Active Directory شامل Domain Controller، DNS، DHCP، Group Policy، OU، Security، Backup و Monitoring با قابلیت ثبت پیشرفت و یادداشت شخصی.
+</p>
+
+</div>
+
+</a>
+
+<a class="card" href="coming-soon.html">
+
+<div class="cover">
+🌐
+</div>
+
+<div class="content">
+
+<div class="badge soon">
+بزودی
+</div>
+
+<h3>
+MikroTik
+</h3>
+
+<p>
+سناریوهای عملی MikroTik شامل Routing، NAT، Firewall، VPN، VLAN، Queue، Wireless و پروژه‌های واقعی شبکه.
+</p>
+
+</div>
+
+</a>
+
+<a class="card" href="coming-soon.html">
+
+<div class="cover">
+🏢
+</div>
+
+<div class="content">
+
+<div class="badge soon">
+بزودی
+</div>
+
+<h3>
+MCSE
+</h3>
+
+<p>
+Windows Server، Hyper-V، Storage، Security، File Services، Clustering و سرویس‌های سازمانی مایکروسافت.
+</p>
+
+</div>
+
+</a>
+
+</section>
+
+<footer class="footer">
+BeB Tower Academy • Version 0.1
+</footer>
+
+</body>
+</html>
