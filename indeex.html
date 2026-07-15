@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeB Tower | My Mind Command Center</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --bg:#070b14;
+    --bg2:#0f172a;
+    --card:#111827cc;
+    --border:#23304a;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --accent:#38bdf8;
+    --accent2:#818cf8;
+    --success:#22c55e;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Inter,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    overflow-x:hidden;
+}
+
+#bg{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+}
+
+.overlay{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background:
+    radial-gradient(circle at center, rgba(56,189,248,.12), transparent 40%),
+    radial-gradient(circle at top right, rgba(129,140,248,.15), transparent 35%),
+    linear-gradient(to bottom,#05070d 0%,#070b14 100%);
+}
+
+nav{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:100;
+    backdrop-filter:blur(12px);
+    background:rgba(5,10,20,.5);
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.nav-wrap{
+    max-width:1400px;
+    margin:auto;
+    padding:18px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:1.3rem;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+.logo span{
+    color:var(--accent);
+}
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:100px 20px 40px;
+}
+
+.hero-inner{
+    max-width:900px;
+}
+
+.badge{
+    display:inline-block;
+    padding:10px 18px;
+    border:1px solid rgba(56,189,248,.3);
+    border-radius:100px;
+    color:var(--accent);
+    margin-bottom:24px;
+    background:rgba(56,189,248,.08);
+}
+
+.hero h1{
+    font-size:clamp(3rem,8vw,6rem);
+    line-height:1;
+    font-weight:800;
+    margin-bottom:20px;
+}
+
+.gradient{
+    background:linear-gradient(135deg,#38bdf8,#818cf8);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.hero p{
+    max-width:700px;
+    margin:auto;
+    color:var(--muted);
+    line-height:1.8;
+    font-size:1.05rem;
+}
+
+.actions{
+    margin-top:40px;
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    padding:14px 26px;
+    border-radius:12px;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.primary{
+    background:linear-gradient(135deg,#38bdf8,#818cf8);
+    color:white;
+}
+
+.secondary{
+    border:1px solid rgba(255,255,255,.1);
+    color:white;
+}
+
+.btn:hover{
+    transform:translateY(-3px);
+}
+
+.section{
+    max-width:1400px;
+    margin:auto;
+    padding:80px 24px;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.section-title h2{
+    font-size:2rem;
+    margin-bottom:10px;
+}
+
+.section-title p{
+    color:var(--muted);
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:24px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    padding:28px;
+    backdrop-filter:blur(18px);
+    transition:.35s;
+    text-decoration:none;
+    color:white;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    border-color:rgba(56,189,248,.4);
+    box-shadow:0 0 40px rgba(56,189,248,.15);
+}
+
+.icon{
+    width:60px;
+    height:60px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.6rem;
+    background:rgba(56,189,248,.12);
+    margin-bottom:20px;
+}
+
+.card h3{
+    margin-bottom:12px;
+}
+
+.card p{
+    color:var(--muted);
+    line-height:1.7;
+}
+
+.coming{
+    opacity:.75;
+}
+
+.footer{
+    text-align:center;
+    padding:60px 20px;
+    color:#64748b;
+    border-top:1px solid rgba(255,255,255,.05);
+    margin-top:50px;
+}
+
+.status{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-top:30px;
+}
+
+.stat{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:18px;
+    padding:20px;
+}
+
+.stat h4{
+    color:var(--accent);
+    margin-bottom:8px;
+}
+
+@media(max-width:768px){
+
+.hero h1{
+    font-size:3rem;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+<div class="overlay"></div>
+
+<nav>
+    <div class="nav-wrap">
+        <div class="logo">BeB <span>Tower</span></div>
+    </div>
+</nav>
+
+<section class="hero">
+
+    <div class="hero-inner">
+
+        <div class="badge">
+            My Mind Command Center
+        </div>
+
+        <h1>
+            Build Your Own
+            <span class="gradient">Second Brain</span>
+        </h1>
+
+        <p>
+            A personal digital tower for organizing projects, knowledge,
+            ideas, notes, learning paths and digital assets in one connected ecosystem.
+        </p>
+
+        <div class="actions">
+            <a href="#active" class="btn primary">Enter The Tower</a>
+            <a href="#future" class="btn secondary">Future Floors</a>
+        </div>
+
+        <div class="status">
+
+            <div class="stat">
+                <h4>Phase</h4>
+                <div>Foundation</div>
+            </div>
+
+            <div class="stat">
+                <h4>Status</h4>
+                <div>Under Construction</div>
+            </div>
+
+            <div class="stat">
+                <h4>Owner</h4>
+                <div>Behrouz</div>
+            </div>
+
+            <div class="stat">
+                <h4>Version</h4>
+                <div>0.1 Alpha</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="section" id="active">
+
+    <div class="section-title">
+        <h2>Active Floors</h2>
+        <p>Core systems currently being built</p>
+    </div>
+
+    <div class="grid">
+
+        <a href="workhub.html" class="card">
+            <div class="icon">⚡</div>
+            <h3>Work Hub</h3>
+            <p>
+                Daily dashboard, projects, goals, checklists and skill progress.
+            </p>
+        </a>
+
+        <a href="academy.html" class="card">
+            <div class="icon">🎓</div>
+            <h3>Academy</h3>
+            <p>
+                Courses, learning paths, documentation and quizzes.
+            </p>
+        </a>
+
+        <a href="notes.html" class="card">
+            <div class="icon">📝</div>
+            <h3>Notes</h3>
+            <p>
+                Fast capture system with detachable note workspace.
+            </p>
+        </a>
+
+        <a href="thinkroom.html" class="card">
+            <div class="icon">💡</div>
+            <h3>Think Room</h3>
+            <p>
+                Brainstorming, idea incubation and concept development.
+            </p>
+        </a>
+
+        <a href="capture.html" class="card">
+            <div class="icon">📥</div>
+            <h3>Capture Desk</h3>
+            <p>
+                Save content from Telegram, web pages, videos and documents.
+            </p>
+        </a>
+
+    </div>
+
+</section>
+
+<section class="section" id="future">
+
+    <div class="section-title">
+        <h2>Future Floors</h2>
+        <p>Reserved for future expansion</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card coming">
+            <div class="icon">🏛️</div>
+            <h3>Culture Hall</h3>
+            <p>
+                Library, cinema and gramophone.
+            </p>
+        </div>
+
+        <div class="card coming">
+            <div class="icon">📰</div>
+            <h3>News Room</h3>
+            <p>
+                Personalized intelligence and information feed.
+            </p>
+        </div>
+
+        <div class="card coming">
+            <div class="icon">🗄️</div>
+            <h3>Locker</h3>
+            <p>
+                Small files, references and digital resources.
+            </p>
+        </div>
+
+        <div class="card coming">
+            <div class="icon">📦</div>
+            <h3>Warehouse</h3>
+            <p>
+                Archive and long-term storage.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<footer class="footer">
+    BeB Tower • My Mind Command Center
+</footer>
+
+<script>
+
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
+
+let w,h,stars=[];
+
+function resize(){
+    w=canvas.width=window.innerWidth;
+    h=canvas.height=window.innerHeight;
+
+    stars=[];
+
+    for(let i=0;i<140;i++){
+        stars.push({
+            x:Math.random()*w,
+            y:Math.random()*h,
+            r:Math.random()*2,
+            vx:(Math.random()-.5)*0.15,
+            vy:(Math.random()-.5)*0.15
+        });
+    }
+}
+
+resize();
+
+window.addEventListener('resize',resize);
+
+function animate(){
+
+    ctx.clearRect(0,0,w,h);
+
+    for(let s of stars){
+
+        s.x+=s.vx;
+        s.y+=s.vy;
+
+        if(s.x<0||s.x>w) s.vx*=-1;
+        if(s.y<0||s.y>h) s.vy*=-1;
+
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fillStyle='rgba(56,189,248,.8)';
+        ctx.fill();
+    }
+
+    for(let i=0;i<stars.length;i++){
+
+        for(let j=i+1;j<stars.length;j++){
+
+            let dx=stars[i].x-stars[j].x;
+            let dy=stars[i].y-stars[j].y;
+            let d=Math.sqrt(dx*dx+dy*dy);
+
+            if(d<130){
+
+                ctx.beginPath();
+                ctx.moveTo(stars[i].x,stars[i].y);
+                ctx.lineTo(stars[j].x,stars[j].y);
+
+                ctx.strokeStyle='rgba(56,189,248,'+(1-d/130)*0.15+')';
+                ctx.stroke();
+
+            }
+
+        }
+
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
