@@ -1,0 +1,559 @@
+<!--
+GID: 1012
+PID: BT-012
+FILE: capture-desk.html
+PROJECT: BeB Tower
+VERSION: 1.2.0
+DATE: 2026-07-16
+AUTHOR: BeB
+STATUS: ACTIVE
+-->
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BeB Tower | Capture Desk</title>
+
+<script src="themes.js"></script>
+<script src="db.js"></script>
+
+<style>
+
+@font-face{
+font-family:"Vazirmatn";
+src:url("./assets/fonts/Vazirmatn-FD-Regular.woff2") format("woff2");
+}
+
+:root{
+--bg:#050816;
+--card-bg:rgba(255,255,255,.05);
+--border:rgba(255,255,255,.08);
+--text:#f8fafc;
+--muted:#94a3b8;
+--accent:#4cc9f0;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Vazirmatn",sans-serif;
+background:var(--bg);
+color:var(--text);
+padding:30px;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top right,rgba(76,201,240,.10),transparent 30%),
+radial-gradient(circle at bottom left,rgba(67,97,238,.10),transparent 30%);
+pointer-events:none;
+}
+
+.container{
+max-width:1600px;
+margin:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.card{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:24px;
+padding:20px;
+backdrop-filter:blur(20px);
+margin-bottom:20px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.stat{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:20px;
+padding:20px;
+text-align:center;
+}
+
+.stat h2{
+color:var(--accent);
+margin-top:8px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:12px;
+margin-top:8px;
+margin-bottom:12px;
+border-radius:12px;
+border:1px solid var(--border);
+background:rgba(255,255,255,.04);
+color:var(--text);
+font-family:inherit;
+}
+
+textarea{
+min-height:140px;
+resize:vertical;
+}
+
+button{
+padding:12px 16px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:var(--accent);
+color:white;
+font-family:inherit;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(420px,1fr));
+gap:20px;
+}
+
+.item{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:20px;
+padding:18px;
+}
+
+.badge{
+display:inline-block;
+padding:5px 12px;
+border-radius:999px;
+background:rgba(76,201,240,.15);
+margin-bottom:10px;
+font-size:.8rem;
+}
+
+.meta{
+font-size:.85rem;
+color:var(--muted);
+margin-top:12px;
+}
+
+.actions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:12px;
+}
+
+.search-row{
+display:grid;
+grid-template-columns:1fr 220px;
+gap:12px;
+margin-bottom:20px;
+}
+
+a{
+color:var(--accent);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>📥 میز دریافت مطالب</h1>
+
+<a href="dashboard.html">
+<button>بازگشت</button>
+</a>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+کل مطالب
+<h2 id="totalItems">0</h2>
+</div>
+
+<div class="stat">
+لینک‌ها
+<h2 id="totalLinks">0</h2>
+</div>
+
+<div class="stat">
+فایل‌ها
+<h2 id="totalFiles">0</h2>
+</div>
+
+<div class="stat">
+دسته‌ها
+<h2 id="totalCategories">0</h2>
+</div>
+
+</div>
+
+<div class="card">
+
+<label>عنوان</label>
+<input id="title">
+
+<label>دسته</label>
+<select id="category">
+<option>تلگرام</option>
+<option>آموزشی</option>
+<option>ایده</option>
+<option>پروژه</option>
+<option>لینک</option>
+<option>سایر</option>
+</select>
+
+<label>برچسب‌ها</label>
+<input id="tags">
+
+<label>لینک</label>
+<input id="link">
+
+<label>مسیر فایل</label>
+<input id="file">
+
+<label>متن</label>
+<textarea id="content"></textarea>
+
+<button onclick="saveCapture()">
+ثبت مطلب
+</button>
+
+</div>
+
+<div class="search-row">
+
+<input
+id="search"
+placeholder="جستجو..."
+oninput="render()">
+
+<select
+id="filter"
+onchange="render()">
+
+<option value="all">همه دسته‌ها</option>
+<option value="تلگرام">تلگرام</option>
+<option value="آموزشی">آموزشی</option>
+<option value="ایده">ایده</option>
+<option value="پروژه">پروژه</option>
+<option value="لینک">لینک</option>
+
+</select>
+
+</div>
+
+<div id="captures" class="grid"></div>
+
+</div>
+
+<script>
+
+let db = BeBDB.load();
+
+function saveDB(){
+BeBDB.save(db);
+}
+
+function saveCapture(){
+
+const title =
+document.getElementById("title").value;
+
+if(!title.trim()) return;
+
+db.captures.unshift({
+
+id:Date.now(),
+
+title:title,
+
+category:
+document.getElementById("category").value,
+
+tags:
+document.getElementById("tags").value,
+
+link:
+document.getElementById("link").value,
+
+file:
+document.getElementById("file").value,
+
+content:
+document.getElementById("content").value,
+
+created:
+new Date().toLocaleString("fa-IR"),
+
+updated:
+new Date().toLocaleString("fa-IR")
+
+});
+
+saveDB();
+
+document.getElementById("title").value="";
+document.getElementById("tags").value="";
+document.getElementById("link").value="";
+document.getElementById("file").value="";
+document.getElementById("content").value="";
+
+render();
+
+}
+
+function deleteCapture(id){
+
+db.captures =
+db.captures.filter(
+x=>x.id!==id
+);
+
+saveDB();
+
+render();
+
+}
+
+function convertToNote(id){
+
+const item =
+db.captures.find(
+x=>x.id===id
+);
+
+if(!item) return;
+
+const notebook =
+db.notebooks[0];
+
+db.notes.unshift({
+
+id:Date.now(),
+
+notebookId:notebook.id,
+
+title:item.title,
+
+content:item.content,
+
+created:
+new Date().toLocaleString("fa-IR"),
+
+updated:
+new Date().toLocaleString("fa-IR")
+
+});
+
+saveDB();
+
+alert("به یادداشت منتقل شد");
+
+}
+
+function convertToIdea(id){
+
+const item =
+db.captures.find(
+x=>x.id===id
+);
+
+if(!item) return;
+
+db.ideas.unshift({
+
+id:Date.now(),
+
+title:item.title,
+
+description:item.content,
+
+tag:item.tags,
+
+priority:"متوسط",
+
+status:"active",
+
+created:
+new Date().toLocaleString("fa-IR"),
+
+updated:
+new Date().toLocaleString("fa-IR")
+
+});
+
+saveDB();
+
+alert("به اتاق فکر منتقل شد");
+
+}
+
+function renderStats(){
+
+document.getElementById("totalItems").innerText =
+db.captures.length;
+
+document.getElementById("totalLinks").innerText =
+db.captures.filter(x=>x.link).length;
+
+document.getElementById("totalFiles").innerText =
+db.captures.filter(x=>x.file).length;
+
+const categories =
+new Set(
+db.captures.map(x=>x.category)
+);
+
+document.getElementById("totalCategories").innerText =
+categories.size;
+
+}
+
+function render(){
+
+renderStats();
+
+const search =
+document.getElementById("search")
+.value
+.toLowerCase();
+
+const filter =
+document.getElementById("filter").value;
+
+const box =
+document.getElementById("captures");
+
+box.innerHTML="";
+
+db.captures
+.filter(item=>{
+
+const matchSearch =
+
+item.title.toLowerCase().includes(search) ||
+
+item.content.toLowerCase().includes(search) ||
+
+(item.tags || "")
+.toLowerCase()
+.includes(search);
+
+const matchFilter =
+
+filter==="all" ||
+
+item.category===filter;
+
+return matchSearch && matchFilter;
+
+})
+.forEach(item=>{
+
+box.innerHTML += `
+
+<div class="item">
+
+<div class="badge">
+${item.category}
+</div>
+
+<h3>${item.title}</h3>
+
+<p>${item.content}</p>
+
+${item.tags ?
+`<p>🏷 ${item.tags}</p>`
+:
+""
+}
+
+${item.link ?
+`<p><a href="${item.link}" target="_blank">🔗 لینک</a></p>`
+:
+""
+}
+
+${item.file ?
+`<p>📁 ${item.file}</p>`
+:
+""
+}
+
+<div class="meta">
+
+ثبت:
+${item.created}
+
+<br>
+
+آخرین تغییر:
+${item.updated}
+
+</div>
+
+<div class="actions">
+
+<button
+onclick="convertToNote(${item.id})">
+یادداشت
+</button>
+
+<button
+onclick="convertToIdea(${item.id})">
+ایده
+</button>
+
+<button
+onclick="deleteCapture(${item.id})">
+حذف
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!--
+GID: 1016
+PID: BT-016
+FILE: culture-hall.html
+PROJECT: BeB Tower
+VERSION: 1.2.0
+DATE: 2026-07-16
+AUTHOR: BeB
+STATUS: ACTIVE
+-->
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BeB Tower | Culture Hall</title>
+
+<script src="themes.js"></script>
+
+<style>
+
+@font-face{
+font-family:"Vazirmatn";
+src:url("./assets/fonts/Vazirmatn-FD-Regular.woff2") format("woff2");
+}
+
+:root{
+--bg:#050816;
+--card-bg:rgba(255,255,255,.05);
+--border:rgba(255,255,255,.08);
+--text:#f8fafc;
+--muted:#94a3b8;
+--accent:#4cc9f0;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Vazirmatn",sans-serif;
+background:var(--bg);
+color:var(--text);
+min-height:100vh;
+padding:40px;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top right,rgba(76,201,240,.12),transparent 30%),
+radial-gradient(circle at bottom left,rgba(67,97,238,.10),transparent 30%);
+pointer-events:none;
+}
+
+.container{
+max-width:1400px;
+margin:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:40px;
+}
+
+.header h1{
+font-size:2.2rem;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:25px;
+}
+
+.card{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:28px;
+padding:30px;
+backdrop-filter:blur(20px);
+transition:.25s;
+text-decoration:none;
+color:var(--text);
+}
+
+.card:hover{
+transform:translateY(-4px);
+border-color:var(--accent);
+}
+
+.icon{
+font-size:3rem;
+margin-bottom:15px;
+}
+
+.title{
+font-size:1.4rem;
+font-weight:700;
+margin-bottom:10px;
+}
+
+.desc{
+color:var(--muted);
+line-height:2;
+}
+
+.btn{
+padding:12px 18px;
+border:none;
+border-radius:14px;
+background:var(--accent);
+color:white;
+cursor:pointer;
+font-family:inherit;
+}
+
+.footer{
+margin-top:40px;
+text-align:center;
+color:var(--muted);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>🏛 تالار فرهنگ</h1>
+
+<a href="dashboard.html">
+<button class="btn">
+بازگشت
+</button>
+</a>
+
+</div>
+
+<div class="grid">
+
+<a
+href="books.html"
+class="card">
+
+<div class="icon">
+📚
+</div>
+
+<div class="title">
+کتابخانه
+</div>
+
+<div class="desc">
+مدیریت کتاب‌ها، فایل‌های PDF، لینک دانلود، دسته‌بندی‌ها و یادداشت‌های مطالعه
+</div>
+
+</a>
+
+<a
+href="movies.html"
+class="card">
+
+<div class="icon">
+🎬
+</div>
+
+<div class="title">
+سینما
+</div>
+
+<div class="desc">
+آرشیو فیلم‌ها، سریال‌ها، مستندها، لینک‌ها و یادداشت‌های شخصی
+</div>
+
+</a>
+
+<a
+href="music.html"
+class="card">
+
+<div class="icon">
+🎵
+</div>
+
+<div class="title">
+گرامافون
+</div>
+
+<div class="desc">
+آرشیو موسیقی، آلبوم‌ها، خوانندگان و لینک‌های ذخیره شده
+</div>
+
+</a>
+
+<a
+href="coming-soon.html"
+class="card">
+
+<div class="icon">
+🖼️
+</div>
+
+<div class="title">
+گالری
+</div>
+
+<div class="desc">
+آرشیو تصاویر، آثار هنری، طرح‌ها و الهام‌های بصری
+</div>
+
+</a>
+
+<a
+href="coming-soon.html"
+class="card">
+
+<div class="icon">
+🎮
+</div>
+
+<div class="title">
+سرگرمی
+</div>
+
+<div class="desc">
+بازی‌ها، پروژه‌های تفریحی و محتوای شخصی غیرکاری
+</div>
+
+</a>
+
+<a
+href="coming-soon.html"
+class="card">
+
+<div class="icon">
+🧠
+</div>
+
+<div class="title">
+دانشنامه شخصی
+</div>
+
+<div class="desc">
+مرکز جمع‌آوری دانش، خلاصه‌ها، یادگیری‌ها و تجربیات
+</div>
+
+</a>
+
+</div>
+
+<div class="footer">
+
+BeB Tower • Culture Hall • GID 1016
+
+</div>
+
+</div>
+
+</body>
+
+</html>

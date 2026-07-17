@@ -1,0 +1,517 @@
+<!--
+GID: 1010
+PID: BT-010
+FILE: ideas.html
+PROJECT: BeB Tower
+VERSION: 1.2.0
+DATE: 2026-07-16
+AUTHOR: BeB
+STATUS: ACTIVE
+-->
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BeB Tower | Idea Room</title>
+
+<script src="themes.js"></script>
+<script src="db.js"></script>
+
+<style>
+
+@font-face{
+font-family:"Vazirmatn";
+src:url("./assets/fonts/Vazirmatn-FD-Regular.woff2") format("woff2");
+}
+
+:root{
+--bg:#050816;
+--card-bg:rgba(255,255,255,.05);
+--border:rgba(255,255,255,.08);
+--text:#f8fafc;
+--muted:#94a3b8;
+--accent:#4cc9f0;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Vazirmatn",sans-serif;
+background:var(--bg);
+color:var(--text);
+padding:30px;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top right,rgba(76,201,240,.10),transparent 30%),
+radial-gradient(circle at bottom left,rgba(67,97,238,.10),transparent 30%);
+pointer-events:none;
+}
+
+.container{
+max-width:1500px;
+margin:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.card{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:24px;
+padding:20px;
+backdrop-filter:blur(20px);
+margin-bottom:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+gap:20px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.stat{
+background:var(--card-bg);
+border:1px solid var(--border);
+padding:20px;
+border-radius:20px;
+text-align:center;
+}
+
+.stat h2{
+color:var(--accent);
+margin-top:8px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:12px;
+margin-top:8px;
+margin-bottom:12px;
+border-radius:12px;
+border:1px solid var(--border);
+background:rgba(255,255,255,.04);
+color:var(--text);
+font-family:inherit;
+}
+
+textarea{
+min-height:120px;
+resize:vertical;
+}
+
+button{
+padding:12px 16px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-family:inherit;
+background:var(--accent);
+color:white;
+}
+
+.idea{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:20px;
+padding:18px;
+}
+
+.idea h3{
+margin-bottom:10px;
+}
+
+.idea p{
+line-height:1.9;
+margin-bottom:10px;
+}
+
+.badge{
+display:inline-block;
+padding:5px 12px;
+border-radius:999px;
+font-size:.8rem;
+margin-left:6px;
+margin-bottom:10px;
+}
+
+.active{background:#14532d;color:#86efac;}
+.dev{background:#1e3a8a;color:#93c5fd;}
+.archive{background:#78350f;color:#fcd34d;}
+.dead{background:#7f1d1d;color:#fca5a5;}
+
+.meta{
+font-size:.85rem;
+color:var(--muted);
+margin-top:12px;
+}
+
+.actions{
+display:flex;
+gap:8px;
+margin-top:15px;
+flex-wrap:wrap;
+}
+
+.search-row{
+display:grid;
+grid-template-columns:1fr 220px;
+gap:12px;
+margin-bottom:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>💡 اتاق فکر</h1>
+
+<a href="dashboard.html">
+<button>بازگشت</button>
+</a>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+فعال
+<h2 id="sActive">0</h2>
+</div>
+
+<div class="stat">
+در حال توسعه
+<h2 id="sDev">0</h2>
+</div>
+
+<div class="stat">
+بایگانی
+<h2 id="sArchive">0</h2>
+</div>
+
+<div class="stat">
+منسوخ
+<h2 id="sDead">0</h2>
+</div>
+
+</div>
+
+<div class="card">
+
+<label>عنوان ایده</label>
+<input id="title">
+
+<label>برچسب</label>
+<input id="tag">
+
+<label>اولویت</label>
+<select id="priority">
+<option>بالا</option>
+<option>متوسط</option>
+<option>پایین</option>
+</select>
+
+<label>وضعیت</label>
+<select id="status">
+<option value="active">فعال</option>
+<option value="dev">در حال توسعه</option>
+<option value="archive">بایگانی موقت</option>
+<option value="dead">منسوخ شده</option>
+</select>
+
+<label>توضیحات</label>
+<textarea id="description"></textarea>
+
+<button onclick="saveIdea()">
+ثبت ایده
+</button>
+
+</div>
+
+<div class="search-row">
+
+<input
+id="search"
+placeholder="جستجو..."
+oninput="render()">
+
+<select
+id="filter"
+onchange="render()">
+
+<option value="all">همه وضعیت‌ها</option>
+<option value="active">فعال</option>
+<option value="dev">در حال توسعه</option>
+<option value="archive">بایگانی</option>
+<option value="dead">منسوخ</option>
+
+</select>
+
+</div>
+
+<div id="ideas" class="grid"></div>
+
+</div>
+
+<script>
+
+let db = BeBDB.load();
+
+function saveDB(){
+BeBDB.save(db);
+}
+
+function saveIdea(){
+
+const title =
+document.getElementById("title").value;
+
+if(!title.trim()) return;
+
+db.ideas.unshift({
+
+id:Date.now(),
+
+title:title,
+
+tag:
+document.getElementById("tag").value,
+
+priority:
+document.getElementById("priority").value,
+
+status:
+document.getElementById("status").value,
+
+description:
+document.getElementById("description").value,
+
+created:
+new Date().toLocaleString("fa-IR"),
+
+updated:
+new Date().toLocaleString("fa-IR")
+
+});
+
+saveDB();
+
+document.getElementById("title").value="";
+document.getElementById("tag").value="";
+document.getElementById("description").value="";
+
+render();
+
+}
+
+function deleteIdea(id){
+
+db.ideas =
+db.ideas.filter(
+x=>x.id!==id
+);
+
+saveDB();
+
+render();
+
+}
+
+function convertToProject(id){
+
+const idea =
+db.ideas.find(
+x=>x.id===id
+);
+
+if(!idea) return;
+
+db.projects.unshift({
+
+id:Date.now(),
+
+title:idea.title,
+
+priority:idea.priority,
+
+description:idea.description,
+
+progress:0,
+
+tasks:[],
+
+created:
+new Date().toLocaleString("fa-IR")
+
+});
+
+saveDB();
+
+alert("پروژه ایجاد شد");
+
+}
+
+function statusTitle(status){
+
+if(status==="active")
+return "فعال";
+
+if(status==="dev")
+return "در حال توسعه";
+
+if(status==="archive")
+return "بایگانی";
+
+return "منسوخ";
+
+}
+
+function renderStats(){
+
+document.getElementById("sActive").innerText =
+db.ideas.filter(x=>x.status==="active").length;
+
+document.getElementById("sDev").innerText =
+db.ideas.filter(x=>x.status==="dev").length;
+
+document.getElementById("sArchive").innerText =
+db.ideas.filter(x=>x.status==="archive").length;
+
+document.getElementById("sDead").innerText =
+db.ideas.filter(x=>x.status==="dead").length;
+
+}
+
+function render(){
+
+renderStats();
+
+const search =
+document.getElementById("search")
+.value
+.toLowerCase();
+
+const filter =
+document.getElementById("filter").value;
+
+const box =
+document.getElementById("ideas");
+
+box.innerHTML="";
+
+db.ideas
+.filter(item=>{
+
+const matchSearch =
+
+item.title.toLowerCase().includes(search) ||
+
+item.description.toLowerCase().includes(search) ||
+
+(item.tag || "")
+.toLowerCase()
+.includes(search);
+
+const matchFilter =
+
+filter==="all" ||
+item.status===filter;
+
+return matchSearch && matchFilter;
+
+})
+.forEach(item=>{
+
+box.innerHTML += `
+
+<div class="idea">
+
+<div class="badge ${item.status}">
+${statusTitle(item.status)}
+</div>
+
+<h3>${item.title}</h3>
+
+<p>${item.description}</p>
+
+<p>
+🏷 ${item.tag || "-"}
+</p>
+
+<p>
+⭐ ${item.priority}
+</p>
+
+<div class="meta">
+
+ایجاد:
+${item.created}
+
+<br>
+
+آخرین تغییر:
+${item.updated}
+
+</div>
+
+<div class="actions">
+
+<button
+onclick="convertToProject(${item.id})">
+تبدیل به پروژه
+</button>
+
+<button
+onclick="deleteIdea(${item.id})">
+حذف
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!--
+GID: 1014
+PID: BT-014
+FILE: movies.html
+PROJECT: BeB Tower
+VERSION: 1.2.0
+DATE: 2026-07-16
+AUTHOR: BeB
+STATUS: ACTIVE
+-->
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BeB Tower | Cinema</title>
+
+<script src="themes.js"></script>
+<script src="db.js"></script>
+
+<style>
+
+@font-face{
+font-family:"Vazirmatn";
+src:url("./assets/fonts/Vazirmatn-FD-Regular.woff2") format("woff2");
+}
+
+:root{
+--bg:#050816;
+--card-bg:rgba(255,255,255,.05);
+--border:rgba(255,255,255,.08);
+--text:#f8fafc;
+--muted:#94a3b8;
+--accent:#4cc9f0;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Vazirmatn",sans-serif;
+background:var(--bg);
+color:var(--text);
+padding:30px;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top right,rgba(76,201,240,.10),transparent 30%),
+radial-gradient(circle at bottom left,rgba(67,97,238,.10),transparent 30%);
+pointer-events:none;
+}
+
+.container{
+max-width:1600px;
+margin:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.card{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:24px;
+padding:20px;
+backdrop-filter:blur(20px);
+margin-bottom:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
+gap:20px;
+}
+
+.movie{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:20px;
+padding:18px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:12px;
+margin-top:8px;
+margin-bottom:12px;
+border-radius:12px;
+border:1px solid var(--border);
+background:rgba(255,255,255,.04);
+color:var(--text);
+font-family:inherit;
+}
+
+button{
+padding:12px 16px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:var(--accent);
+color:white;
+font-family:inherit;
+}
+
+.actions{
+display:flex;
+gap:8px;
+margin-top:12px;
+}
+
+.meta{
+font-size:.85rem;
+color:var(--muted);
+margin-top:12px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>🎬 سینما</h1>
+
+<a href="dashboard.html">
+<button>بازگشت</button>
+</a>
+
+</div>
+
+<div class="card">
+
+<input id="title" placeholder="نام فیلم">
+
+<input id="year" placeholder="سال">
+
+<input id="genre" placeholder="ژانر">
+
+<input id="director" placeholder="کارگردان">
+
+<input id="link" placeholder="لینک دانلود یا تلگرام">
+
+<input id="poster" placeholder="پوستر">
+
+<textarea id="description" placeholder="توضیحات"></textarea>
+
+<button onclick="saveMovie()">
+ثبت فیلم
+</button>
+
+</div>
+
+<div id="movies" class="grid"></div>
+
+</div>
+
+<script>
+
+let db=BeBDB.load();
+
+if(!db.movies){
+db.movies=[];
+}
+
+function saveDB(){
+BeBDB.save(db);
+}
+
+function saveMovie(){
+
+const title=
+document.getElementById("title").value;
+
+if(!title.trim()) return;
+
+db.movies.unshift({
+
+id:Date.now(),
+
+title:title,
+
+year:
+document.getElementById("year").value,
+
+genre:
+document.getElementById("genre").value,
+
+director:
+document.getElementById("director").value,
+
+link:
+document.getElementById("link").value,
+
+poster:
+document.getElementById("poster").value,
+
+description:
+document.getElementById("description").value,
+
+created:
+new Date().toLocaleString("fa-IR")
+
+});
+
+saveDB();
+
+location.reload();
+
+}
+
+function deleteMovie(id){
+
+db.movies=
+db.movies.filter(
+x=>x.id!==id
+);
+
+saveDB();
+
+render();
+
+}
+
+function render(){
+
+const box=
+document.getElementById("movies");
+
+box.innerHTML="";
+
+db.movies.forEach(movie=>{
+
+box.innerHTML+=`
+
+<div class="movie">
+
+<h3>${movie.title}</h3>
+
+<p>📅 ${movie.year||"-"}</p>
+
+<p>🎭 ${movie.genre||"-"}</p>
+
+<p>🎬 ${movie.director||"-"}</p>
+
+<p>${movie.description||""}</p>
+
+${movie.link ?
+`<p><a target="_blank" href="${movie.link}">🔗 مشاهده</a></p>`
+:
+""}
+
+<div class="meta">
+ثبت: ${movie.created}
+</div>
+
+<div class="actions">
+
+<button onclick="deleteMovie(${movie.id})">
+حذف
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+render();
+
+</script>
+
+</body>
+
+</html>

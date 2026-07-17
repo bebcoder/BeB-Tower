@@ -1,0 +1,578 @@
+<!--
+GID: 1011
+PID: BT-011
+FILE: projects.html
+PROJECT: BeB Tower
+VERSION: 1.2.0
+DATE: 2026-07-16
+AUTHOR: BeB
+STATUS: ACTIVE
+-->
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BeB Tower | Projects</title>
+
+<script src="themes.js"></script>
+<script src="db.js"></script>
+
+<style>
+
+@font-face{
+font-family:"Vazirmatn";
+src:url("./assets/fonts/Vazirmatn-FD-Regular.woff2") format("woff2");
+}
+
+:root{
+--bg:#050816;
+--card-bg:rgba(255,255,255,.05);
+--border:rgba(255,255,255,.08);
+--text:#f8fafc;
+--muted:#94a3b8;
+--accent:#4cc9f0;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Vazirmatn",sans-serif;
+background:var(--bg);
+color:var(--text);
+padding:30px;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top right,rgba(76,201,240,.10),transparent 30%),
+radial-gradient(circle at bottom left,rgba(67,97,238,.10),transparent 30%);
+pointer-events:none;
+}
+
+.container{
+max-width:1600px;
+margin:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.card{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:24px;
+padding:20px;
+backdrop-filter:blur(20px);
+margin-bottom:20px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.stat{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:20px;
+padding:20px;
+text-align:center;
+}
+
+.stat h2{
+color:var(--accent);
+margin-top:8px;
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:12px;
+margin-top:8px;
+margin-bottom:12px;
+border-radius:12px;
+border:1px solid var(--border);
+background:rgba(255,255,255,.04);
+color:var(--text);
+font-family:inherit;
+}
+
+textarea{
+min-height:120px;
+resize:vertical;
+}
+
+button{
+padding:12px 16px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:var(--accent);
+color:white;
+font-family:inherit;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(420px,1fr));
+gap:20px;
+}
+
+.project{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:20px;
+padding:18px;
+}
+
+.progress{
+height:10px;
+background:rgba(255,255,255,.08);
+border-radius:999px;
+overflow:hidden;
+margin:12px 0;
+}
+
+.progress-bar{
+height:100%;
+background:var(--accent);
+}
+
+.badge{
+display:inline-block;
+padding:5px 12px;
+border-radius:999px;
+font-size:.8rem;
+margin-bottom:10px;
+}
+
+.active{
+background:#14532d;
+color:#86efac;
+}
+
+.pause{
+background:#78350f;
+color:#fcd34d;
+}
+
+.done{
+background:#0f766e;
+color:#99f6e4;
+}
+
+.archive{
+background:#7f1d1d;
+color:#fca5a5;
+}
+
+.task{
+display:flex;
+gap:10px;
+padding:8px;
+margin-top:6px;
+border-radius:10px;
+background:rgba(255,255,255,.03);
+}
+
+.task input{
+width:auto;
+margin:0;
+}
+
+.meta{
+font-size:.85rem;
+color:var(--muted);
+margin-top:12px;
+}
+
+.actions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:12px;
+}
+
+.search-row{
+display:grid;
+grid-template-columns:1fr 220px;
+gap:12px;
+margin-bottom:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+
+<h1>🚀 میز پروژه‌ها</h1>
+
+<a href="dashboard.html">
+<button>بازگشت</button>
+</a>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+فعال
+<h2 id="sActive">0</h2>
+</div>
+
+<div class="stat">
+متوقف
+<h2 id="sPause">0</h2>
+</div>
+
+<div class="stat">
+تکمیل
+<h2 id="sDone">0</h2>
+</div>
+
+<div class="stat">
+بایگانی
+<h2 id="sArchive">0</h2>
+</div>
+
+</div>
+
+<div class="card">
+
+<label>نام پروژه</label>
+<input id="title">
+
+<label>اولویت</label>
+<select id="priority">
+<option>بالا</option>
+<option>متوسط</option>
+<option>پایین</option>
+</select>
+
+<label>وضعیت</label>
+<select id="status">
+<option value="active">فعال</option>
+<option value="pause">متوقف</option>
+<option value="done">تکمیل شده</option>
+<option value="archive">بایگانی</option>
+</select>
+
+<label>درصد پیشرفت</label>
+<input id="progress" type="number" min="0" max="100" value="0">
+
+<label>توضیحات</label>
+<textarea id="description"></textarea>
+
+<button onclick="saveProject()">
+ثبت پروژه
+</button>
+
+</div>
+
+<div class="search-row">
+
+<input
+id="search"
+placeholder="جستجو..."
+oninput="render()">
+
+<select
+id="filter"
+onchange="render()">
+
+<option value="all">همه پروژه‌ها</option>
+<option value="active">فعال</option>
+<option value="pause">متوقف</option>
+<option value="done">تکمیل</option>
+<option value="archive">بایگانی</option>
+
+</select>
+
+</div>
+
+<div id="projects" class="grid"></div>
+
+</div>
+
+<script>
+
+let db = BeBDB.load();
+
+function saveDB(){
+BeBDB.save(db);
+}
+
+function saveProject(){
+
+const title =
+document.getElementById("title").value;
+
+if(!title.trim()) return;
+
+db.projects.unshift({
+
+id:Date.now(),
+
+title:title,
+
+priority:
+document.getElementById("priority").value,
+
+status:
+document.getElementById("status").value,
+
+progress:Number(
+document.getElementById("progress").value
+),
+
+description:
+document.getElementById("description").value,
+
+tasks:[],
+
+created:
+new Date().toLocaleString("fa-IR"),
+
+updated:
+new Date().toLocaleString("fa-IR")
+
+});
+
+saveDB();
+
+document.getElementById("title").value="";
+document.getElementById("description").value="";
+document.getElementById("progress").value="0";
+
+render();
+
+}
+
+function deleteProject(id){
+
+db.projects =
+db.projects.filter(
+x=>x.id!==id
+);
+
+saveDB();
+render();
+
+}
+
+function addTask(id){
+
+const title =
+prompt("عنوان کار");
+
+if(!title) return;
+
+const project =
+db.projects.find(
+p=>p.id===id
+);
+
+project.tasks.push({
+title:title,
+done:false
+});
+
+project.updated =
+new Date().toLocaleString("fa-IR");
+
+saveDB();
+render();
+
+}
+
+function toggleTask(projectId,index){
+
+const project =
+db.projects.find(
+p=>p.id===projectId
+);
+
+project.tasks[index].done =
+!project.tasks[index].done;
+
+project.updated =
+new Date().toLocaleString("fa-IR");
+
+saveDB();
+render();
+
+}
+
+function statusTitle(status){
+
+if(status==="active") return "فعال";
+if(status==="pause") return "متوقف";
+if(status==="done") return "تکمیل شده";
+
+return "بایگانی";
+
+}
+
+function renderStats(){
+
+document.getElementById("sActive").innerText =
+db.projects.filter(x=>x.status==="active").length;
+
+document.getElementById("sPause").innerText =
+db.projects.filter(x=>x.status==="pause").length;
+
+document.getElementById("sDone").innerText =
+db.projects.filter(x=>x.status==="done").length;
+
+document.getElementById("sArchive").innerText =
+db.projects.filter(x=>x.status==="archive").length;
+
+}
+
+function render(){
+
+renderStats();
+
+const search =
+document.getElementById("search")
+.value
+.toLowerCase();
+
+const filter =
+document.getElementById("filter").value;
+
+const box =
+document.getElementById("projects");
+
+box.innerHTML="";
+
+db.projects
+.filter(project=>{
+
+const matchSearch =
+
+project.title.toLowerCase().includes(search) ||
+
+project.description.toLowerCase().includes(search);
+
+const matchFilter =
+
+filter==="all" ||
+
+project.status===filter;
+
+return matchSearch && matchFilter;
+
+})
+.forEach(project=>{
+
+box.innerHTML += `
+
+<div class="project">
+
+<div class="badge ${project.status}">
+${statusTitle(project.status)}
+</div>
+
+<h3>${project.title}</h3>
+
+<p>${project.description}</p>
+
+<p>⭐ ${project.priority}</p>
+
+<div class="progress">
+<div
+class="progress-bar"
+style="width:${project.progress}%">
+</div>
+</div>
+
+<p>${project.progress}%</p>
+
+<h4>چک لیست</h4>
+
+${project.tasks.map((task,index)=>`
+
+<div class="task">
+
+<input
+type="checkbox"
+${task.done ? "checked":""}
+onclick="toggleTask(${project.id},${index})">
+
+<span style="
+text-decoration:${task.done ? 'line-through':'none'}
+">
+
+${task.title}
+
+</span>
+
+</div>
+
+`).join("")}
+
+<div class="actions">
+
+<button
+onclick="addTask(${project.id})">
++ کار
+</button>
+
+<button
+onclick="deleteProject(${project.id})">
+حذف
+</button>
+
+</div>
+
+<div class="meta">
+
+ایجاد:
+${project.created}
+
+<br>
+
+آخرین تغییر:
+${project.updated}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>

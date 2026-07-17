@@ -1,0 +1,561 @@
+<!--
+GID: 1009
+PID: BT-009
+FILE: notes.html
+PROJECT: BeB Tower
+VERSION: 1.2.0
+DATE: 2026-07-16
+AUTHOR: BeB
+STATUS: ACTIVE
+-->
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BeB Tower | Notes</title>
+
+<script src="themes.js"></script>
+<script src="db.js"></script>
+
+<style>
+
+@font-face{
+font-family:"Vazirmatn";
+src:url("./assets/fonts/Vazirmatn-FD-Regular.woff2") format("woff2");
+}
+
+:root{
+--bg:#050816;
+--card-bg:rgba(255,255,255,.05);
+--border:rgba(255,255,255,.08);
+--text:#f8fafc;
+--muted:#94a3b8;
+--accent:#4cc9f0;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:"Vazirmatn",sans-serif;
+background:var(--bg);
+color:var(--text);
+height:100vh;
+overflow:hidden;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at top right,rgba(76,201,240,.12),transparent 30%),
+radial-gradient(circle at bottom left,rgba(67,97,238,.10),transparent 30%);
+pointer-events:none;
+}
+
+.app{
+display:grid;
+grid-template-columns:280px 340px 1fr;
+height:100vh;
+}
+
+.sidebar,
+.notes-panel{
+
+background:var(--card-bg);
+
+backdrop-filter:blur(20px);
+
+border-left:1px solid var(--border);
+
+overflow:auto;
+
+padding:20px;
+}
+
+.editor-panel{
+padding:25px;
+display:flex;
+flex-direction:column;
+}
+
+.logo{
+font-size:1.5rem;
+font-weight:700;
+margin-bottom:20px;
+}
+
+.logo span{
+color:var(--accent);
+}
+
+.btn{
+width:100%;
+padding:12px;
+border:none;
+border-radius:14px;
+background:var(--accent);
+color:white;
+cursor:pointer;
+font-family:inherit;
+margin-bottom:10px;
+}
+
+.search{
+width:100%;
+padding:12px;
+border-radius:12px;
+border:1px solid var(--border);
+background:rgba(255,255,255,.04);
+color:var(--text);
+margin-bottom:15px;
+font-family:inherit;
+}
+
+.notebook{
+padding:12px;
+border-radius:14px;
+border:1px solid var(--border);
+margin-bottom:10px;
+cursor:pointer;
+}
+
+.notebook.active{
+border-color:var(--accent);
+background:rgba(76,201,240,.08);
+}
+
+.note{
+padding:14px;
+border-radius:14px;
+border:1px solid var(--border);
+margin-bottom:10px;
+cursor:pointer;
+}
+
+.note.active{
+border-color:var(--accent);
+background:rgba(76,201,240,.08);
+}
+
+.note small{
+color:var(--muted);
+}
+
+.title-input{
+width:100%;
+font-size:1.6rem;
+background:none;
+border:none;
+outline:none;
+color:var(--text);
+font-family:inherit;
+margin-bottom:15px;
+}
+
+.editor{
+flex:1;
+background:rgba(255,255,255,.04);
+border:1px solid var(--border);
+border-radius:20px;
+padding:18px;
+resize:none;
+color:var(--text);
+font-family:inherit;
+line-height:2;
+outline:none;
+}
+
+.meta{
+margin-top:10px;
+color:var(--muted);
+font-size:.85rem;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+gap:10px;
+}
+
+.counter{
+font-size:.85rem;
+color:var(--muted);
+margin-bottom:15px;
+}
+
+.small-btn{
+padding:10px 14px;
+border:none;
+border-radius:10px;
+background:rgba(255,255,255,.06);
+color:var(--text);
+cursor:pointer;
+}
+
+.empty{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100%;
+color:var(--muted);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="sidebar">
+
+<div class="logo">
+BeB <span>Notes</span>
+</div>
+
+<button class="btn" onclick="newNotebook()">
++ دفتر جدید
+</button>
+
+<div id="notebooks"></div>
+
+</div>
+
+<div class="notes-panel">
+
+<button class="btn" onclick="newNote()">
++ یادداشت جدید
+</button>
+
+<input
+id="search"
+class="search"
+placeholder="جستجو..."
+oninput="renderNotes()">
+
+<div class="counter" id="counter"></div>
+
+<div id="notes"></div>
+
+</div>
+
+<div class="editor-panel">
+
+<div id="editor" class="empty">
+یک یادداشت انتخاب کنید
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let db=BeBDB.load();
+
+if(!db.notebooks.length){
+
+db.notebooks.push({
+id:Date.now(),
+name:"یادداشت های من"
+});
+
+BeBDB.save(db);
+
+}
+
+let currentNotebook=
+db.notebooks[0].id;
+
+let currentNote=null;
+
+function saveDatabase(){
+
+BeBDB.save(db);
+
+}
+
+function newNotebook(){
+
+const name=
+prompt("نام دفتر");
+
+if(!name) return;
+
+db.notebooks.push({
+
+id:Date.now(),
+
+name:name
+
+});
+
+saveDatabase();
+
+renderNotebooks();
+
+}
+
+function newNote(){
+
+const note={
+
+id:Date.now(),
+
+notebookId:currentNotebook,
+
+title:"یادداشت جدید",
+
+content:"",
+
+created:
+new Date().toLocaleString("fa-IR"),
+
+updated:
+new Date().toLocaleString("fa-IR")
+
+};
+
+db.notes.unshift(note);
+
+currentNote=note.id;
+
+saveDatabase();
+
+renderNotes();
+
+openNote();
+
+}
+
+function renderNotebooks(){
+
+const box=
+document.getElementById("notebooks");
+
+box.innerHTML="";
+
+db.notebooks.forEach(nb=>{
+
+box.innerHTML+=`
+
+<div
+class="notebook ${currentNotebook===nb.id ? 'active':''}"
+onclick="selectNotebook(${nb.id})">
+
+${nb.name}
+
+</div>
+
+`;
+
+});
+
+}
+
+function selectNotebook(id){
+
+currentNotebook=id;
+
+renderNotebooks();
+
+renderNotes();
+
+}
+
+function renderNotes(){
+
+const search=
+document
+.getElementById("search")
+.value
+.toLowerCase();
+
+const notes=
+db.notes.filter(n=>
+
+n.notebookId===currentNotebook &&
+
+(
+n.title.toLowerCase().includes(search) ||
+
+n.content.toLowerCase().includes(search)
+
+)
+
+);
+
+document.getElementById("counter").innerText=
+`${notes.length} یادداشت`;
+
+const box=
+document.getElementById("notes");
+
+box.innerHTML="";
+
+notes.forEach(note=>{
+
+box.innerHTML+=`
+
+<div
+class="note ${currentNote===note.id?'active':''}"
+onclick="openNoteById(${note.id})">
+
+<strong>
+${note.title}
+</strong>
+
+<br>
+
+<small>
+${note.updated}
+</small>
+
+</div>
+
+`;
+
+});
+
+}
+
+function openNoteById(id){
+
+currentNote=id;
+
+renderNotes();
+
+openNote();
+
+}
+
+function openNote(){
+
+const note=
+db.notes.find(
+n=>n.id===currentNote
+);
+
+if(!note) return;
+
+document.getElementById("editor").innerHTML=`
+
+<div class="topbar">
+
+<input
+id="title"
+class="title-input"
+value="${note.title}">
+
+<button
+class="small-btn"
+onclick="deleteNote(${note.id})">
+حذف
+</button>
+
+</div>
+
+<textarea
+id="content"
+class="editor">${note.content}</textarea>
+
+<div class="meta">
+
+ایجاد:
+${note.created}
+
+<br>
+
+آخرین ویرایش:
+<span id="updated">
+${note.updated}
+</span>
+
+</div>
+
+`;
+
+document
+.getElementById("title")
+.addEventListener(
+"input",
+updateCurrentNote
+);
+
+document
+.getElementById("content")
+.addEventListener(
+"input",
+updateCurrentNote
+);
+
+}
+
+function updateCurrentNote(){
+
+const note=
+db.notes.find(
+n=>n.id===currentNote
+);
+
+if(!note) return;
+
+note.title=
+document.getElementById("title").value;
+
+note.content=
+document.getElementById("content").value;
+
+note.updated=
+new Date().toLocaleString("fa-IR");
+
+document.getElementById("updated").innerText=
+note.updated;
+
+saveDatabase();
+
+renderNotes();
+
+}
+
+function deleteNote(id){
+
+if(!confirm("حذف شود؟"))
+return;
+
+db.notes=
+db.notes.filter(
+n=>n.id!==id
+);
+
+currentNote=null;
+
+saveDatabase();
+
+renderNotes();
+
+document.getElementById("editor").innerHTML=
+'<div class="empty">یادداشت حذف شد</div>';
+
+}
+
+renderNotebooks();
+renderNotes();
+
+</script>
+
+</body>
+</html>
